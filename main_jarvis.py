@@ -1,32 +1,16 @@
 from core.voice_input import listen
 from core.voice_output import speak
-from transformers import pipeline
+from core.brain import respond as get_jarvis_response # Renamed import for clarity
+from core.day_checkin import daily_check
 import time
-
-# 🧠 Load the model (you can replace this with a better model if needed)
-jarvis_thinker = pipeline("text2text-generation", model="declare-lab/flan-alpaca-large")
-
-# 🎯 Dynamic + mood-aware response
-def respond_to_query(query, mood):
-    style = {
-        "happy": "in a cheerful and fun tone",
-        "okay": "in a neutral and helpful tone",
-        "tired": "in a gentle and supportive tone",
-        "low": "like a caring friend who's really listening"
-    }.get(mood, "like a smart and friendly assistant")
-
-    prompt = f"""You are Jarvis, Pragadeesh's AI assistant.
-Pragadeesh said: "{query}"
-Reply {style}, and make your answer sound natural and human."""
-    
-    result = jarvis_thinker(prompt, max_length=100, do_sample=True, temperature=0.95)[0]['generated_text']
-    return result.strip()
 
 # 🎬 Start Jarvis
 def start_jarvis():
     speak("System boot complete. Ready when you are, Pragadeesh.")
-    speak("Good morning, Pragadeesh. How are you feeling today?")
-    mood = input("Your mood today (happy, okay, tired, low): ").lower()
+    
+    # Perform daily check-in and get mood
+    # daily_check() handles the greeting and mood input/logging
+    mood = daily_check() 
 
     while True:
         try:
@@ -36,7 +20,7 @@ def start_jarvis():
                 print("🤖 Jarvis is thinking...")
                 time.sleep(1.1)
 
-                response = respond_to_query(query, mood)
+                response = get_jarvis_response(query, mood)
                 print(f"Jarvis: {response}")
                 speak(response)
 

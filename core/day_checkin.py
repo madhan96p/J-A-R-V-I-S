@@ -5,4 +5,6 @@ from core.memory import load_memory
 def daily_check():
     memory = load_memory()
     speak(f"Good {memory['part_of_day']}, {memory['user']}. How are you feeling today?")
-    log_mood()
+    mood = input("Your mood today (happy, okay, tired, low): ").strip().lower()
+    log_mood(mood)
+    return mood
